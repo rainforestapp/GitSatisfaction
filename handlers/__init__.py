@@ -3,29 +3,13 @@ import github3
 import json
 
 from os import environ
+from models.issue import Issue
 
 env = environ.get('APP_ENV', 'development')
 config = getattr(__import__("config.%s" % env), env)
 
 SETTINGS = config.settings()
 client = github3.login(SETTINGS['github_user'], SETTINGS['github_pass'])
-
-class Issue(object):
-    def __init__(self, g3_issue):
-        self.g3_issue = g3_issue
-
-    def to_json(self):
-        return  {
-            'id': self.g3_issue.id,
-            'body': self.g3_issue.body_text,
-            'title': self.g3_issue.title, 
-            'num_subscribers': 5
-        }
-
-    def add_subscriber(self, email):
-        b = self.g3_issue.body_text = "\nlisteners: " + email
-        self.g3_issue.edit(body = b)
-
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
