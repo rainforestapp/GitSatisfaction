@@ -4,6 +4,7 @@ import json
 import requests
 
 from os import environ
+from models.issue import Issue
 
 env = environ.get('APP_ENV', 'development')
 config = getattr(__import__("config.%s" % env), env)
@@ -29,7 +30,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(
             "main.html",
-            page_title='user: %s, pass: %s' % (SETTINGS['github_user'], SETTINGS['github_pass']),
+            page_title='GitSatisfaction',
             google_analytics_id=SETTINGS['google_analytics_id'],
         )
 
@@ -39,14 +40,11 @@ class IssuesHandler(tornado.web.RequestHandler):
         r = client.repository('rainforestapp', 'GitSatisfaction')
         out = []
         for issue in r.iter_issues(state='open'):
-            out.append({'id': issue.id,
-                'title': issue.title,
-                'body': issue.body_text,
-                'num_subscribers': 5})
+            out.append(Issue(issue).to_json())
         self.write(json.dumps(out))
+
     def post(self):
         r = client.repository('rainforestapp', 'GitSatisfaction')
-        print self.request.body
         new_issue = tornado.escape.json_decode(self.request.body)
         label = r.label('gs')
         if not label: label = r.create_label('gs', '#00ffff')
@@ -56,6 +54,17 @@ class IssuesHandler(tornado.web.RequestHandler):
                 'title': issue.title,
                 'body': issue.body_text,
                 'num_subscribers': 5})
+
+class SubscribeHandler(tornado.web.RequestHandler):
+    def post(self, issue_id):
+        r = client.repository('rainforestapp', 'GitSatisfaction')
+        issue = Issue(r.issue(issue_id))
+
+        j = tornado.escape.json_decode(self.request.body)
+
+        issue.add_subscriber(j["email"])
+
+        self.write(issue.to_json())
 
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):

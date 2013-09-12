@@ -15,6 +15,7 @@ define("port", default=5000, help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         urls = [
+            (r"/issues/(\d+)/subscribe", handlers.SubscribeHandler),
             (r"/issues/?", handlers.IssuesHandler),
             (r"/?", handlers.MainHandler),
             (r"/(callbacks/github)?", handlers.GithubCallbackHandler)
