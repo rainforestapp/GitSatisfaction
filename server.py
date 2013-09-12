@@ -5,6 +5,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import json
 
 from tornado.options import define
 define("port", default=5000, help="run on the given port", type=int)
@@ -40,7 +41,7 @@ class MainHandler(tornado.web.RequestHandler):
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
         print "GithubCallbackHandler:"
-        print self.request.body
+        print json.loads(self.request.body)
         self.write("test")
 
 
