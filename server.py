@@ -13,7 +13,8 @@ define("port", default=5000, help="run on the given port", type=int)
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/([^/]+)?", MainHandler)
+            (r"/([^/]+)?", MainHandler),
+            (r"/(callbacks/github)?", GithubCallbackHandler)
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -35,6 +36,10 @@ class MainHandler(tornado.web.RequestHandler):
             page_title='GitSatisfaction',
             google_analytics_id=google_analytics_id,
         )
+
+class GithubCallbackHandler(tornado.web.RequestHandler):
+    def post(self, q):
+        self.write("test")
 
 
 def main():
