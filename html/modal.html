@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body, html {
+        width: 100%;
+        height: 100%;
+        background-color: rgb(223, 223, 255);
+      }
+      p {
+        margin: 2em;
+      }
+
+      #git-satisfaction-modal {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+      }
+
+      #git-satisfaction-modal-background {
+        position: absolute;
+        top: 0; right: 0; bottom: 0; left: 0;
+        width: 100%; height: 100%;
+        background-color: #000000;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+        filter: alpha(opacity=50);
+        -moz-opacity: 0.5;
+        -khtml-opacity: 0.5;
+        opacity: 0.5;
+        z-index: 1000;
+      }
+
+      #git-satisfaction-modal-body {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 600px;
+        height: 400px;
+        margin-left: -300px;
+        margin-top: -200px;
+        background-color: #ffffff;
+        z-index: 2000;
+        -webkit-box-shadow: 0px 0px 10px 0px #000;
+        box-shadow: 0px 5px 10px 0px #000;
+      }
+
+      #git-satisfaction-left-pane,
+      #git-satisfaction-right-pane {
+        height: 100%;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        box-sizing:border-box;
+      }
+
+      #git-satisfaction-left-pane {
+        float: left;
+        width: 33%;
+        border-right: 1px solid #E6E6E6;
+        overflow: auto;
+      }
+
+      #git-satisfaction-right-pane {
+        float: right;
+        width: 66%;
+      }
+
+      #git-satisfaction-issue-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      #git-satisfaction-issue-list > li {
+        border-bottom: 1px solid #E6E6E6;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        box-sizing:border-box;
+        padding: 1em;
+      }
+
+      #git-satisfaction-submit-form {
+        padding: 1em;
+      }
+
+      #git-satisfaction-form-textarea {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        width: 100%;
+        padding: 0.5em;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        box-sizing:border-box;
+        height: 10em;
+        margin: 1em 0;
+        border: 1px solid #A0A0A0;
+        resize: vertical;
+      }
+
+      #git-satisfaction-form-submit {
+        font-family: Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        padding: 0.5em;
+        margin: 0;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <p>Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta tongue frankfurter pork chop drumstick, andouille tenderloin pastrami ribeye kielbasa pork belly biltong corned beef chicken. Brisket jowl tenderloin, tri-tip bresaola ball tip spare ribs sirloin. Boudin turkey jowl andouille, tenderloin pork chop sirloin kielbasa capicola. Tongue short loin corned beef tri-tip flank.</p>
+
+    <p>Leberkäse beef ribs pork chop, meatloaf rump fatback filet mignon. Frankfurter spare ribs sirloin drumstick, bresaola jerky salami. Short loin shoulder chicken swine venison pork belly. Ball tip spare ribs turducken flank swine. Boudin pork ground round, flank turducken bresaola pastrami chuck sausage rump cow tongue t-bone. Brisket corned beef sirloin, ribeye turducken beef shankle pork belly boudin short ribs pork. Brisket chuck shank rump.</p>
+
+    <p>Prosciutto corned beef ribeye boudin tri-tip. Strip steak venison jerky, short ribs ham t-bone tongue. Pancetta rump short loin, short ribs sirloin tongue pig jowl cow beef ribs. Leberkäse short ribs drumstick cow, shankle bacon jerky frankfurter. Bacon ball tip fatback cow beef ribs kielbasa. Beef ribs meatball cow, drumstick ham tri-tip sirloin short loin biltong pastrami. Leberkäse pork chop shankle, short loin meatloaf ham salami beef ribs ball tip sirloin venison flank.</p>
+
+    <div id="git-satisfaction-modal" class="cleanslate">
+      <div id="git-satisfaction-modal-body">
+        <div id="git-satisfaction-left-pane">
+          <div id="git-satisfaction-pane-heading">
+            Existing issues:
+          </div>
+          <ul id="git-satisfaction-issue-list">
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+            <li>Some issue name thing</li>
+          </ul>
+        </div>
+        <div id="git-satisfaction-right-pane">
+          <div id="git-satisfaction-submit-form">
+            Create a new issue:
+            <textarea id="git-satisfaction-form-textarea" placeholder="enter a new issue here"></textarea>
+            <button id="git-satisfaction-form-submit">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div id="git-satisfaction-modal-background"></div>
+    </div>
+
+  </body>
+</html>
