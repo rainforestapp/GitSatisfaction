@@ -80,6 +80,7 @@
     left_pane = $('<div>', { id: "git-satisfaction-left-pane" })
     left_pane.append $('<div>', { id: "git-satisfaction-pane-heading", text: "Existing issues:" })
     left_pane.append $('<ul>', { id: "git-satisfaction-issue-list" })
+    left_pane.append $('<button>', { id: "git-satisfaction-create-issue", text: "Create new issue" })
     
     right_pane = $('<div>', { id: "git-satisfaction-right-pane" })
 

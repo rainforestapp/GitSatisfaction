@@ -101,6 +101,10 @@
       left_pane.append($('<ul>', {
         id: "git-satisfaction-issue-list"
       }));
+      left_pane.append($('<button>', {
+        id: "git-satisfaction-create-issue",
+        text: "Create new issue"
+      }));
       right_pane = $('<div>', {
         id: "git-satisfaction-right-pane"
       });
