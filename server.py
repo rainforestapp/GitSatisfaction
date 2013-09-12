@@ -44,8 +44,7 @@ class MainHandler(tornado.web.RequestHandler):
 
         self.render(
             "main.html",
-            page_title='Heroku Funtimes',
-            page_heading='Hi!',
+            page_title='GitSatisfaction',
             google_analytics_id=google_analytics_id,
         )
 
