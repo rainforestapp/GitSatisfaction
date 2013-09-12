@@ -8,7 +8,7 @@
         background-color: rgb(223, 223, 255);
       }
       p {
-        margin: 2em;
+        /*margin: 2em;*/
       }
 
       #git-satisfaction-modal {
@@ -16,6 +16,12 @@
         font-size: 14px;
         position: fixed;
         top: 0; right: 0; bottom: 0; left: 0;
+      }
+
+      #git-satisfaction-modal div {
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        box-sizing:border-box;
       }
 
       #git-satisfaction-modal-background {
@@ -41,8 +47,8 @@
         margin-top: -200px;
         background-color: #ffffff;
         z-index: 2000;
-        -webkit-box-shadow: 0px 0px 10px 0px #000;
-        box-shadow: 0px 5px 10px 0px #000;
+        -webkit-box-shadow: 0px 0px 10px 0px #555;
+        box-shadow: 0px 5px 10px 0px #555;
       }
 
       #git-satisfaction-left-pane,
@@ -55,7 +61,7 @@
 
       #git-satisfaction-left-pane {
         float: left;
-        width: 33%;
+        width: 34%;
         border-right: 1px solid #E6E6E6;
         overflow: auto;
       }
@@ -77,6 +83,11 @@
         -moz-box-sizing:border-box;
         box-sizing:border-box;
         padding: 1em;
+      }
+
+      #git-satisfaction-issue-list > li:hover {
+        cursor: pointer;
+        background-color: #E6E6E6;
       }
 
       #git-satisfaction-submit-form {
@@ -104,6 +115,18 @@
         margin: 0;
       }
 
+      #git-satisfaction-pane-heading {
+        background-color: #000000;
+        color: #ffffff;
+        padding: 0.5em;
+      }
+
+      .git-satisfaction-p {
+        font-size: 14px;
+        line-height: 20px;
+        margin: 1em;
+      }
+
     </style>
   </head>
   <body>
@@ -117,9 +140,7 @@
     <div id="git-satisfaction-modal" class="cleanslate">
       <div id="git-satisfaction-modal-body">
         <div id="git-satisfaction-left-pane">
-          <div id="git-satisfaction-pane-heading">
-            Existing issues:
-          </div>
+          <div id="git-satisfaction-pane-heading">Existing issues:</div>
           <ul id="git-satisfaction-issue-list">
             <li>Some issue name thing</li>
             <li>Some issue name thing</li>
@@ -135,10 +156,16 @@
           </ul>
         </div>
         <div id="git-satisfaction-right-pane">
-          <div id="git-satisfaction-submit-form">
+
+<!--           <div id="git-satisfaction-submit-form">
             Create a new issue:
             <textarea id="git-satisfaction-form-textarea" placeholder="enter a new issue here"></textarea>
             <button id="git-satisfaction-form-submit">Submit</button>
+          </div>
+ -->
+
+          <div id="git-satisfaction-enlarged-issue">
+            <p class="git-satisfaction-p">Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta tongue frankfurter pork chop drumstick, andouille tenderloin pastrami ribeye kielbasa pork belly biltong corned beef chicken. Brisket jowl tenderloin, tri-tip bresaola ball tip spare ribs sirloin. Boudin turkey jowl andouille, tenderloin pork chop sirloin kielbasa capicola. Tongue short loin corned beef tri-tip flank.</p>
           </div>
         </div>
       </div>
