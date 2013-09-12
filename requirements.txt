@@ -1,1 +1,1 @@
-tornado
+Tornado==3.0.2
