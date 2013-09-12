@@ -36,11 +36,13 @@ class IssuesHandler(tornado.web.RequestHandler):
         if not label: label = r.create_label('gs', '#00ffff')
         r.create_issue(new_issue['title'], body=new_issue['body'], labels='[gs]')
 
+
+
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
         print "GithubCallbackHandler:"
-        payload = tornado.escape.json_decode(self.get_argument('payload'))
+        payload = tornado.escape.json_decode(self.request.body)
         print payload
 
         self.content_type = 'application/json'
-        self.write(payload['after'])
+        self.write(payload['action'])
