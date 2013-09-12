@@ -18,6 +18,7 @@ class Issue(object):
         return  {
             'id': self.g3_issue.id,
             'body': self.g3_issue.body_text,
+            'title': self.g3_issue.title, 
             'num_subscribers': 5
         }
 
@@ -39,17 +40,20 @@ class IssuesHandler(tornado.web.RequestHandler):
     def get(self):
         r = client.repository('rainforestapp', 'GitSatisfaction')
         out = []
-        for issue in r.iter_issues(state='open', labels='gs'):
+        for issue in r.iter_issues(state='open'):
             out.append(Issue(issue).to_json())
         self.write(json.dumps(out))
 
     def post(self):
         r = client.repository('rainforestapp', 'GitSatisfaction')
-        print self.request.body
         new_issue = tornado.escape.json_decode(self.request.body)
         label = r.label('gs')
         if not label: label = r.create_label('gs', '#00ffff')
-        r.create_issue(new_issue['title'], body=new_issue['body'], labels='[gs]')
+        issue = r.create_issue(new_issue['title'], body=new_issue['body'])
+        issue.add_labels('gs')
+
+
+
 
 class SubscribeHandler(tornado.web.RequestHandler):
     def post(self, issue_id):
@@ -65,8 +69,8 @@ class SubscribeHandler(tornado.web.RequestHandler):
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
         print "GithubCallbackHandler:"
-        payload = tornado.escape.json_decode(self.get_argument('payload'))
+        payload = tornado.escape.json_decode(self.request.body)
         print payload
 
         self.content_type = 'application/json'
-        self.write(payload['after'])
+        self.write(payload['action'])

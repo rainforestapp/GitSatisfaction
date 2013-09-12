@@ -51,22 +51,54 @@
   main = ->
     loadCss "../static/css/style.css"
     buildWidget()
+    renderIssues(['thing', 'next', 'lol', 'biz'])
+    renderForm()
 
   buildWidget = ->
     container = $('<div>', { id: "git-satisfaction-modal"})
-    container.append $('<div>', {id: "git-satisfaction-modal-body"})
+    container.append $('<div>', { id: "git-satisfaction-modal-background" })    
+    
+    modal_body = $('<div>', {id: "git-satisfaction-modal-body"})
+
+    left_pane = $('<div>', { id: "git-satisfaction-left-pane" })
+    left_pane.append $('<div>', { id: "git-satisfaction-pane-heading", text: "Existing issues:" })
+    left_pane.append $('<ul>', { id: "git-satisfaction-issue-list" })
+    
+    right_pane = $('<div>', { id: "git-satisfaction-right-pane" })
+
+    modal_body.append left_pane
+    modal_body.append right_pane
+
+    container.append modal_body
 
     $('body').append container
-      
-    # //example jsonp call
-    # //var jsonp_url = "www.example.com/jsonpscript.js?callback=?";
-    # //jQuery.getJSON(jsonp_url, function(result) {
-    # //  alert("win");
-    # //});
-    
-    # //example load css
-    # //loadCss("http://example.com/widget.css");
-    
-    # //example script load
-    # //loadScript("http://example.com/anotherscript.js", function() { /* loaded */ });
+
+  renderIssues = (issues) ->
+    issue_list = $('#git-satisfaction-issue-list')
+    # render each issue as an li
+    for issue in issues
+      issue_list.append $("<li>", { text: issue })
+
+  renderForm = ->
+    # build and replace right pane html with form
+    right_pane = $('#git-satisfaction-right-pane')
+    form = $('<form>', {id: "git-satisfaction-submit-form", text: "Create a new issue:"})
+    form.append $('<textarea>', {id: "git-satisfaction-form-textarea", placeholder: "Enter a new issue here", name: "new-issue"})
+    form.append $('<button>', {id: "git-satisfaction-form-submit", text: "Submit", type: "submit"})
+    right_pane.html form
+
+    # add listener
+    form.on 'submit', (e) ->
+      e.preventDefault()
+      inputs = form.serializeArray()
+      # send inputs to API
+      $('#git-satisfaction-form-textarea').val ""
+      renderIssue()
+
+  renderIssue = (issue) ->
+    right_pane = $('#git-satisfaction-right-pane')
+    issue_holder = $('<div>', { id: "git-satisfaction-enlarged-issue" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-p', text: "Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta" })
+    right_pane.html issue_holder
+
 )()
