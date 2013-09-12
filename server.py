@@ -46,8 +46,11 @@ class Issues(tornado.web.RequestHandler):
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
         print "GithubCallbackHandler:"
-        print json.loads(self.request.body)
-        self.write("test")
+        payload = tornado.escape.json_decode(self.request.body)
+        print payload
+
+        self.content_type = 'application/json'
+        self.write(payload['after'])
 
 def main():
     tornado.options.parse_command_line()
