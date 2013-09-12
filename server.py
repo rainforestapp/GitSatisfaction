@@ -12,12 +12,10 @@ import json
 from tornado.options import define
 define("port", default=5000, help="run on the given port", type=int)
 
+env = environ.get('APP_ENV', 'development')
+config = getattr(__import__("config.%s" % env), env)
 
-SETTINGS = dict(
-    github_user=environ['GITHUB_USER'],
-    github_pass=environ['GITHUB_PASS'],
-    google_analytics_id=environ.get('GOOGLEANALYTICSID', False)
-)
+SETTINGS = config.settings()
 
 class Application(tornado.web.Application):
     def __init__(self):
