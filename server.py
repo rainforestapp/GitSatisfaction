@@ -39,6 +39,8 @@ class MainHandler(tornado.web.RequestHandler):
 
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
+        print "GithubCallbackHandler:"
+        print self.request.body
         self.write("test")
 
 
