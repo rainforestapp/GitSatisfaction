@@ -13,3 +13,7 @@ Install virtual env
     source bin/active
 
     pip install -r requirements.txt
+
+## Running the server
+
+    python server.py
