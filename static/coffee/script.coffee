@@ -3,6 +3,7 @@
   scriptName = "embed.js" #name of this script, used to get reference to own tag
   jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"
   jqueryVersion = "1.8.3"
+  dict = {}
 
   # Get reference to self (scriptTag)
   allScripts = document.getElementsByTagName('script')
@@ -51,8 +52,24 @@
   main = ->
     loadCss "../static/css/style.css"
     buildWidget()
-    renderIssues(['thing', 'next', 'lol', 'biz'])
+    loadIssues()
     renderForm()
+
+  loadIssues = ->
+    $.ajax
+      url: "/issues"
+      success: (data) =>
+        renderIssues data
+      dataType: "json"
+
+  postIssue = (issue) ->
+    $.ajax
+      type: "POST"
+      url: "/issues"
+      dataType: "json"
+      data: JSON.stringify issue
+      success: (data) =>
+        expandIssue(data.id)
 
   buildWidget = ->
     container = $('<div>', { id: "git-satisfaction-modal"})
@@ -63,6 +80,7 @@
     left_pane = $('<div>', { id: "git-satisfaction-left-pane" })
     left_pane.append $('<div>', { id: "git-satisfaction-pane-heading", text: "Existing issues:" })
     left_pane.append $('<ul>', { id: "git-satisfaction-issue-list" })
+    left_pane.append $('<button>', { id: "git-satisfaction-create-issue", text: "Create new issue" })
     
     right_pane = $('<div>', { id: "git-satisfaction-right-pane" })
 
@@ -77,28 +95,42 @@
     issue_list = $('#git-satisfaction-issue-list')
     # render each issue as an li
     for issue in issues
-      issue_list.append $("<li>", { text: issue })
+      dict[issue.id] = issue
+      issue_list.append $("<li>", { text: "#{issue.title} (#{issue.num_subscribers})", id: issue.id, class: "git-satisfaction-issue-li" })
+    
+    # enlarge issue when user clicks on it
+    $('.git-satisfaction-issue-li').on 'click', (e) ->
+      expandIssue $(e.currentTarget).attr('id')
 
   renderForm = ->
     # build and replace right pane html with form
     right_pane = $('#git-satisfaction-right-pane')
     form = $('<form>', {id: "git-satisfaction-submit-form", text: "Create a new issue:"})
-    form.append $('<textarea>', {id: "git-satisfaction-form-textarea", placeholder: "Enter a new issue here", name: "new-issue"})
+    form.append $('<input>', {id: "git-satisfaction-form-title", placeholder: "Enter your title here", name: "title"})
+    form.append $('<textarea>', {id: "git-satisfaction-form-body", placeholder: "Enter a new issue here", name: "body"})
     form.append $('<button>', {id: "git-satisfaction-form-submit", text: "Submit", type: "submit"})
     right_pane.html form
 
     # add listener
-    form.on 'submit', (e) ->
+    form.on 'submit', (e) =>
       e.preventDefault()
-      inputs = form.serializeArray()
-      # send inputs to API
-      $('#git-satisfaction-form-textarea').val ""
-      renderIssue()
+      inputs = {}
+      inputs.title = $('#git-satisfaction-form-title').val()
+      inputs.body = $('#git-satisfaction-form-body').val()
+      postIssue inputs
 
-  renderIssue = (issue) ->
+  expandIssue = (id) ->
+    # get correct issue object by id
+    issue = dict[id]
+
     right_pane = $('#git-satisfaction-right-pane')
     issue_holder = $('<div>', { id: "git-satisfaction-enlarged-issue" })
-    issue_holder.append $('<p>', { class: 'git-satisfaction-p', text: "Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-title', text: issue.title })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-num-voters', text: "#{issue.num_subscribers} voters" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-body', text: issue.body })
     right_pane.html issue_holder
+
+  removeListeners = ->
+    $('#git-satisfaction-submit-form').off()
 
 )()
