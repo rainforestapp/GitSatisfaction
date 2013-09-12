@@ -16,4 +16,4 @@ Install virtual env
 
 ## Running the server
 
-    ./server.py
+    GITHUB_USER=gitsatisfaction GITHUB_PASS=Password123 ./server.py
