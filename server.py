@@ -6,18 +6,18 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 from os import environ
+import github3
 
 import json
 
 from tornado.options import define
+
 define("port", default=5000, help="run on the given port", type=int)
 
+env = environ.get('APP_ENV', 'development')
+config = getattr(__import__("config.%s" % env), env)
 
-SETTINGS = dict(
-    github_user=environ['GITHUB_USER'],
-    github_pass=environ['GITHUB_PASS'],
-    google_analytics_id=environ.get('GOOGLEANALYTICSID', False)
-)
+SETTINGS = config.settings()
 
 class Application(tornado.web.Application):
     def __init__(self):
@@ -43,7 +43,13 @@ class MainHandler(tornado.web.RequestHandler):
 
 class Issues(tornado.web.RequestHandler):
     def get(self):
-        self.write("hello")
+        r = github3.repository('rainforestapp', 'GitSatisfaction')
+        out = []
+        for issue in r.iter_issues():
+            if issue.is_closed(): continue
+            out.append({'id': issue.id,
+                'text': issue.body_text})
+        self.write(json.dumps(out))
 
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
