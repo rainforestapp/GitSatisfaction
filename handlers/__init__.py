@@ -52,9 +52,10 @@ class IssuesHandler(tornado.web.RequestHandler):
         if not label: label = r.create_label('gs', '#00ffff')
         issue = r.create_issue(new_issue['title'], body=new_issue['body'])
         issue.add_labels('gs')
-
-
-
+        self.write({'id': issue.id,
+                'title': issue.title,
+                'body': issue.body_text,
+                'num_subscribers': 5})
 
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
