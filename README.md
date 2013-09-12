@@ -17,3 +17,8 @@ Install virtual env
 ## Running the server
 
     GITHUB_USER=gitsatisfaction GITHUB_PASS=Password123 ./server.py
+
+
+## Test callback
+
+    curl -d "payload=`cat _github_sample.json`" http://localhost:5000/callbacks/github
