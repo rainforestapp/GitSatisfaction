@@ -4,8 +4,6 @@ import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
-from os import environ
-import github3
 
 import json
 import handlers
@@ -13,11 +11,6 @@ import handlers
 from tornado.options import define
 
 define("port", default=5000, help="run on the given port", type=int)
-
-env = environ.get('APP_ENV', 'development')
-config = getattr(__import__("config.%s" % env), env)
-
-SETTINGS = config.settings()
 
 class Application(tornado.web.Application):
     def __init__(self):
