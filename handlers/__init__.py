@@ -15,7 +15,7 @@ client = github3.login(SETTINGS['github_user'], SETTINGS['github_pass'])
 
 def mailgun_send(to, subject, body):
     return requests.post(
-        "https://api.mailgun.net/v2/samples.mailgun.org/messages",
+        "https://api.mailgun.net/v2/gitsatisfaction.com/messages",
         auth=("api", environ.get('MAILGUN_KEY')),
         data={"from": "GitSatisfaction <no-reply@gitsatisfaction.com>",
               "to": [to],
