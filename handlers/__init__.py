@@ -25,6 +25,7 @@ class IssuesHandler(tornado.web.RequestHandler):
         out = []
         for issue in r.iter_issues(state='open'):
             out.append({'id': issue.id,
+                'title': issue.title,
                 'body': issue.body_text,
                 'num_subscribers': 5})
         self.write(json.dumps(out))
