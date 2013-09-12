@@ -3,6 +3,7 @@
   scriptName = "embed.js" #name of this script, used to get reference to own tag
   jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"
   jqueryVersion = "1.8.3"
+  dict = {}
 
   # Get reference to self (scriptTag)
   allScripts = document.getElementsByTagName('script')
@@ -51,8 +52,15 @@
   main = ->
     loadCss "../static/css/style.css"
     buildWidget()
-    renderIssues(['thing', 'next', 'lol', 'biz'])
+    loadIssues()
     renderForm()
+
+  loadIssues = ->
+    $.ajax
+      url: "/issues"
+      success: (data) =>
+        renderIssues data
+      dataType: "json"
 
   buildWidget = ->
     container = $('<div>', { id: "git-satisfaction-modal"})
@@ -77,7 +85,12 @@
     issue_list = $('#git-satisfaction-issue-list')
     # render each issue as an li
     for issue in issues
-      issue_list.append $("<li>", { text: issue })
+      dict[issue.id] = issue
+      issue_list.append $("<li>", { text: "#{issue.num_subscribers}: #{issue.body}", id: issue.id, class: "git-satisfaction-issue-li" })
+    
+    # enlarge issue when user clicks on it
+    $('.git-satisfaction-issue-li').on 'click', (e) ->
+      expandIssue $(e.currentTarget).attr('id')
 
   renderForm = ->
     # build and replace right pane html with form
@@ -93,12 +106,18 @@
       inputs = form.serializeArray()
       # send inputs to API
       $('#git-satisfaction-form-textarea').val ""
-      renderIssue()
+      expandIssue()
 
-  renderIssue = (issue) ->
+  expandIssue = (id) ->
+    # get correct issue object by id
+    issue = dict[id]
+
     right_pane = $('#git-satisfaction-right-pane')
     issue_holder = $('<div>', { id: "git-satisfaction-enlarged-issue" })
-    issue_holder.append $('<p>', { class: 'git-satisfaction-p', text: "Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-p', text: "#{issue.title} (#{issue.num_subscribers} voters): #{issue.body}" })
     right_pane.html issue_holder
+
+  removeListeners = ->
+    $('#git-satisfaction-submit-form').off()
 
 )()

@@ -2,11 +2,12 @@
 (function() {
 
   (function() {
-    var $, allScripts, buildWidget, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadScript, main, name, renderForm, renderIssue, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
+    var $, allScripts, buildWidget, dict, expandIssue, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadIssues, loadScript, main, name, removeListeners, renderForm, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
     $ = null;
     scriptName = "embed.js";
     jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js";
     jqueryVersion = "1.8.3";
+    dict = {};
     allScripts = document.getElementsByTagName('script');
     targetScripts = [];
     for (i = _i = 0, _len = allScripts.length; _i < _len; i = ++_i) {
@@ -54,8 +55,18 @@
     main = function() {
       loadCss("../static/css/style.css");
       buildWidget();
-      renderIssues(['thing', 'next', 'lol', 'biz']);
+      loadIssues();
       return renderForm();
+    };
+    loadIssues = function() {
+      var _this = this;
+      return $.ajax({
+        url: "/issues",
+        success: function(data) {
+          return renderIssues(data);
+        },
+        dataType: "json"
+      });
     };
     buildWidget = function() {
       var container, left_pane, modal_body, right_pane;
@@ -87,16 +98,20 @@
       return $('body').append(container);
     };
     renderIssues = function(issues) {
-      var issue, issue_list, _j, _len1, _results;
+      var issue, issue_list, _j, _len1;
       issue_list = $('#git-satisfaction-issue-list');
-      _results = [];
       for (_j = 0, _len1 = issues.length; _j < _len1; _j++) {
         issue = issues[_j];
-        _results.push(issue_list.append($("<li>", {
-          text: issue
-        })));
+        dict[issue.id] = issue;
+        issue_list.append($("<li>", {
+          text: "" + issue.num_subscribers + ": " + issue.body,
+          id: issue.id,
+          "class": "git-satisfaction-issue-li"
+        }));
       }
-      return _results;
+      return $('.git-satisfaction-issue-li').on('click', function(e) {
+        return expandIssue($(e.currentTarget).attr('id'));
+      });
     };
     renderForm = function() {
       var form, right_pane;
@@ -121,20 +136,24 @@
         e.preventDefault();
         inputs = form.serializeArray();
         $('#git-satisfaction-form-textarea').val("");
-        return renderIssue();
+        return expandIssue();
       });
     };
-    return renderIssue = function(issue) {
-      var issue_holder, right_pane;
+    expandIssue = function(id) {
+      var issue, issue_holder, right_pane;
+      issue = dict[id];
       right_pane = $('#git-satisfaction-right-pane');
       issue_holder = $('<div>', {
         id: "git-satisfaction-enlarged-issue"
       });
       issue_holder.append($('<p>', {
         "class": 'git-satisfaction-p',
-        text: "Leberkäse spare ribs beef kielbasa frankfurter, corned beef strip steak jerky. Bacon flank meatball jowl, hamburger boudin jerky sirloin rump venison turkey drumstick tenderloin. Corned beef turkey beef, hamburger capicola spare ribs ham cow chuck pork chop ribeye tenderloin bresaola venison tongue. Ground round pancetta"
+        text: "" + issue.title + " (" + issue.num_subscribers + " voters): " + issue.body
       }));
       return right_pane.html(issue_holder);
+    };
+    return removeListeners = function() {
+      return $('#git-satisfaction-submit-form').off();
     };
   })();
 
