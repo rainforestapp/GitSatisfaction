@@ -10,10 +10,10 @@ Install virtual env
 
     virtualenv .
 
-    source bin/active
+    source bin/activate
 
     pip install -r requirements.txt
 
 ## Running the server
 
-    python server.py
+    ./server.py
