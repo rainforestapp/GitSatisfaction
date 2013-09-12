@@ -62,6 +62,15 @@
         renderIssues data
       dataType: "json"
 
+  postIssue = (issue) ->
+    $.ajax
+      type: "POST"
+      url: "/issues"
+      dataType: "json"
+      data: JSON.stringify issue
+      success: (data) =>
+        expandIssue(data.id)
+
   buildWidget = ->
     container = $('<div>', { id: "git-satisfaction-modal"})
     container.append $('<div>', { id: "git-satisfaction-modal-background" })    
@@ -86,7 +95,7 @@
     # render each issue as an li
     for issue in issues
       dict[issue.id] = issue
-      issue_list.append $("<li>", { text: "#{issue.num_subscribers}: #{issue.body}", id: issue.id, class: "git-satisfaction-issue-li" })
+      issue_list.append $("<li>", { text: "#{issue.title} (#{issue.num_subscribers})", id: issue.id, class: "git-satisfaction-issue-li" })
     
     # enlarge issue when user clicks on it
     $('.git-satisfaction-issue-li').on 'click', (e) ->
@@ -96,17 +105,18 @@
     # build and replace right pane html with form
     right_pane = $('#git-satisfaction-right-pane')
     form = $('<form>', {id: "git-satisfaction-submit-form", text: "Create a new issue:"})
-    form.append $('<textarea>', {id: "git-satisfaction-form-textarea", placeholder: "Enter a new issue here", name: "new-issue"})
+    form.append $('<input>', {id: "git-satisfaction-form-title", placeholder: "Enter your title here", name: "title"})
+    form.append $('<textarea>', {id: "git-satisfaction-form-body", placeholder: "Enter a new issue here", name: "body"})
     form.append $('<button>', {id: "git-satisfaction-form-submit", text: "Submit", type: "submit"})
     right_pane.html form
 
     # add listener
-    form.on 'submit', (e) ->
+    form.on 'submit', (e) =>
       e.preventDefault()
-      inputs = form.serializeArray()
-      # send inputs to API
-      $('#git-satisfaction-form-textarea').val ""
-      expandIssue()
+      inputs = {}
+      inputs.title = $('#git-satisfaction-form-title').val()
+      inputs.body = $('#git-satisfaction-form-body').val()
+      postIssue inputs
 
   expandIssue = (id) ->
     # get correct issue object by id
@@ -114,7 +124,9 @@
 
     right_pane = $('#git-satisfaction-right-pane')
     issue_holder = $('<div>', { id: "git-satisfaction-enlarged-issue" })
-    issue_holder.append $('<p>', { class: 'git-satisfaction-p', text: "#{issue.title} (#{issue.num_subscribers} voters): #{issue.body}" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-title', text: issue.title })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-num-voters', text: "#{issue.num_subscribers} voters" })
+    issue_holder.append $('<p>', { class: 'git-satisfaction-issue-body', text: issue.body })
     right_pane.html issue_holder
 
   removeListeners = ->

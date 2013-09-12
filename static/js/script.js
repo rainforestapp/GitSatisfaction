@@ -2,7 +2,7 @@
 (function() {
 
   (function() {
-    var $, allScripts, buildWidget, dict, expandIssue, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadIssues, loadScript, main, name, removeListeners, renderForm, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
+    var $, allScripts, buildWidget, dict, expandIssue, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadIssues, loadScript, main, name, postIssue, removeListeners, renderForm, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
     $ = null;
     scriptName = "embed.js";
     jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js";
@@ -68,6 +68,18 @@
         dataType: "json"
       });
     };
+    postIssue = function(issue) {
+      var _this = this;
+      return $.ajax({
+        type: "POST",
+        url: "/issues",
+        dataType: "json",
+        data: JSON.stringify(issue),
+        success: function(data) {
+          return expandIssue(data.id);
+        }
+      });
+    };
     buildWidget = function() {
       var container, left_pane, modal_body, right_pane;
       container = $('<div>', {
@@ -104,7 +116,7 @@
         issue = issues[_j];
         dict[issue.id] = issue;
         issue_list.append($("<li>", {
-          text: "" + issue.num_subscribers + ": " + issue.body,
+          text: "" + issue.title + " (" + issue.num_subscribers + ")",
           id: issue.id,
           "class": "git-satisfaction-issue-li"
         }));
@@ -114,16 +126,22 @@
       });
     };
     renderForm = function() {
-      var form, right_pane;
+      var form, right_pane,
+        _this = this;
       right_pane = $('#git-satisfaction-right-pane');
       form = $('<form>', {
         id: "git-satisfaction-submit-form",
         text: "Create a new issue:"
       });
+      form.append($('<input>', {
+        id: "git-satisfaction-form-title",
+        placeholder: "Enter your title here",
+        name: "title"
+      }));
       form.append($('<textarea>', {
-        id: "git-satisfaction-form-textarea",
+        id: "git-satisfaction-form-body",
         placeholder: "Enter a new issue here",
-        name: "new-issue"
+        name: "body"
       }));
       form.append($('<button>', {
         id: "git-satisfaction-form-submit",
@@ -134,9 +152,10 @@
       return form.on('submit', function(e) {
         var inputs;
         e.preventDefault();
-        inputs = form.serializeArray();
-        $('#git-satisfaction-form-textarea').val("");
-        return expandIssue();
+        inputs = {};
+        inputs.title = $('#git-satisfaction-form-title').val();
+        inputs.body = $('#git-satisfaction-form-body').val();
+        return postIssue(inputs);
       });
     };
     expandIssue = function(id) {
@@ -147,8 +166,16 @@
         id: "git-satisfaction-enlarged-issue"
       });
       issue_holder.append($('<p>', {
-        "class": 'git-satisfaction-p',
-        text: "" + issue.title + " (" + issue.num_subscribers + " voters): " + issue.body
+        "class": 'git-satisfaction-issue-title',
+        text: issue.title
+      }));
+      issue_holder.append($('<p>', {
+        "class": 'git-satisfaction-issue-num-voters',
+        text: "" + issue.num_subscribers + " voters"
+      }));
+      issue_holder.append($('<p>', {
+        "class": 'git-satisfaction-issue-body',
+        text: issue.body
       }));
       return right_pane.html(issue_holder);
     };
