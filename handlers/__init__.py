@@ -14,7 +14,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render(
             "main.html",
-            page_title='user: %s, pass: %s' % (SETTINGS['github_user'], SETTINGS['github_pass']),
+            page_title='GitSatisfaction',
             google_analytics_id=SETTINGS['google_analytics_id'],
         )
 
