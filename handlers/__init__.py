@@ -21,20 +21,22 @@ class MainHandler(tornado.web.RequestHandler):
 
 class IssuesHandler(tornado.web.RequestHandler):
     def get(self):
-    	r = client.repository('rainforestapp', 'GitSatisfaction')
+        r = client.repository('rainforestapp', 'GitSatisfaction')
         out = []
-        for issue in r.iter_issues(state='open', labels='gs'):
+        for issue in r.iter_issues(state='open'):
             out.append({'id': issue.id,
                 'body': issue.body_text,
                 'num_subscribers': 5})
         self.write(json.dumps(out))
     def post(self):
-    	r = client.repository('rainforestapp', 'GitSatisfaction')
-    	print self.request.body
+        r = client.repository('rainforestapp', 'GitSatisfaction')
+        print self.request.body
         new_issue = tornado.escape.json_decode(self.request.body)
         label = r.label('gs')
         if not label: label = r.create_label('gs', '#00ffff')
-        r.create_issue(new_issue['title'], body=new_issue['body'], labels='[gs]')
+        issue = r.create_issue(new_issue['title'], body=new_issue['body'])
+        issue.add_labels('gs')
+
 
 class GithubCallbackHandler(tornado.web.RequestHandler):
     def post(self, q):
