@@ -81,18 +81,24 @@
   padding: 1em;
 }
 
-#git-satisfaction-form-textarea {
+#git-satisfaction-submit-form > textarea,
+#git-satisfaction-submit-form > input {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 14px;
   width: 100%;
   padding: 0.5em;
   -webkit-box-sizing:border-box;
   -moz-box-sizing:border-box;
-  box-sizing:border-box;
-  height: 10em;
-  margin: 1em 0;
+  box-sizing:border-box;  
   border: 1px solid #A0A0A0;
+  margin: 0;
+  margin-top: 1em;
+}
+
+#git-satisfaction-submit-form > textarea#git-satisfaction-form-body {
+  height: 10em;
   resize: vertical;
+  margin-bottom: 1em;
 }
 
 #git-satisfaction-form-submit {
@@ -108,8 +114,15 @@
   padding: 0.5em;
 }
 
-.git-satisfaction-p {
+#git-satisfaction-enlarged-issue > p {
   font-size: 14px;
   line-height: 20px;
   margin: 1em;
+}
+
+#git-satisfaction-enlarged-issue > p.git-satisfaction-issue-title {
+  font-weight: bold;
+  font-size: 16px;
+  border-bottom: 1px solid #E6E6E6;
+  padding-bottom: 1em;
 }
