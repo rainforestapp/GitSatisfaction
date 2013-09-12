@@ -2,7 +2,8 @@
 (function() {
 
   (function() {
-    var allScripts, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadScript, main, name, script, scriptName, scriptTag, targetScripts, _i, _len;
+    var $, allScripts, buildWidget, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadScript, main, name, script, scriptName, scriptTag, targetScripts, _i, _len;
+    $ = null;
     scriptName = "embed.js";
     jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js";
     jqueryVersion = "1.8.3";
@@ -28,7 +29,7 @@
           }
         };
       } else {
-        script_tag.onload = onLoad;
+        script_tag.onload = script_tag.onreadystatechange = onLoad;
       }
       return (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
     };
@@ -38,20 +39,35 @@
       link_tag.setAttribute("type", "text/css");
       link_tag.setAttribute("rel", "stylesheet");
       link_tag.setAttribute("href", href);
-      return (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
+      return (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(link_tag);
     };
     if (window.jQuery === void 0 || window.jQuery.fn.jquery !== jqueryVersion) {
       loadScript(jqueryPath, initjQuery);
     } else {
       initjQuery();
     }
+    window.addEventListener('load', function() {
+      console.log('loaded');
+      return initjQuery();
+    });
     initjQuery = function() {
       var jQuery;
-      jQuery = window.jQuery.noConflict(true);
+      $ = jQuery = window.jQuery.noConflict(true);
       return main();
     };
-    return main = function() {
-      return jQuery(document).ready(function($) {});
+    main = function() {
+      loadCss("../static/css/style.css");
+      return buildWidget();
+    };
+    return buildWidget = function() {
+      var container;
+      container = $('<div>', {
+        id: "git-satisfaction-modal"
+      });
+      container.append($('<div>', {
+        id: "git-satisfaction-modal-body"
+      }));
+      return $('body').append(container);
     };
   })();
 
