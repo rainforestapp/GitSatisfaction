@@ -4,11 +4,11 @@ import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
-import tornado.web
 from os import environ
 import github3
 
 import json
+import handlers
 
 from tornado.options import define
 
@@ -21,48 +21,17 @@ SETTINGS = config.settings()
 
 class Application(tornado.web.Application):
     def __init__(self):
-        handlers = [
-            (r"/issues/?", Issues),
-            (r"/?", MainHandler),
-            (r"/(callbacks/github)?", GithubCallbackHandler)
+        urls = [
+            (r"/issues/?", handlers.IssuesHandler),
+            (r"/?", handlers.MainHandler),
+            (r"/(callbacks/github)?", handlers.GithubCallbackHandler)
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
             debug=True,
         )
-        tornado.web.Application.__init__(self, handlers, **settings)
-
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.render(
-            "main.html",
-            page_title='user: %s, pass: %s' % (SETTINGS['github_user'], SETTINGS['github_pass']),
-            google_analytics_id=SETTINGS['google_analytics_id'],
-        )
-
-class Issues(tornado.web.RequestHandler):
-    r = github3.repository('rainforestapp', 'GitSatisfaction')
-    def get(self):
-        out = []
-        for issue in r.iter_issues(state='open', labels='gs'):
-            out.append({'id': issue.id,
-                'text': issue.body_text})
-        self.write(json.dumps(out))
-    def post(self):
-        new_issue = tornado.escape.json_decode(self.request.body)
-        label = r.label('gs')
-        if not label: label = r.create_label('gs', '#00ffff')
-        r.create_issue(new_issue['title'], body=new_issue['body'], labels='[gs]')
-
-class GithubCallbackHandler(tornado.web.RequestHandler):
-    def post(self, q):
-        print "GithubCallbackHandler:"
-        payload = tornado.escape.json_decode(self.request.body)
-        print payload
-
-        self.content_type = 'application/json'
-        self.write(payload['after'])
+        tornado.web.Application.__init__(self, urls, **settings)
 
 def main():
     tornado.options.parse_command_line()
