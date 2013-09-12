@@ -1,6 +1,7 @@
 import tornado.web
 import github3
 import json
+import requests
 
 from os import environ
 
@@ -9,6 +10,20 @@ config = getattr(__import__("config.%s" % env), env)
 
 SETTINGS = config.settings()
 client = github3.login(SETTINGS['github_user'], SETTINGS['github_pass'])
+
+
+
+def mailgun_send(to, subject, body):
+    return requests.post(
+        "https://api.mailgun.net/v2/samples.mailgun.org/messages",
+        auth=("api", environ.get('MAILGUN_KEY')),
+        data={"from": "GitSatisfaction <no-reply@gitsatisfaction.com>",
+              "to": [to],
+              "subject": subject,
+              "text": body})
+
+
+
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
@@ -45,6 +60,8 @@ class GithubCallbackHandler(tornado.web.RequestHandler):
         print "GithubCallbackHandler:"
         payload = tornado.escape.json_decode(self.request.body)
         print payload
+
+        mailgun_send('russ@rainforestqa.com', 'test issue', json.dumps(payload))
 
         self.content_type = 'application/json'
         self.write(payload['action'])
