@@ -25,7 +25,7 @@
         if this.readyState == 'complete' || this.readyState == 'loaded'
           onLoad()
     else
-      script_tag.onload = script_tag.onreadystatechange = onLoad
+      script_tag.onload = onLoad
 
     (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
 
@@ -37,19 +37,15 @@
     link_tag.setAttribute("href", href)
     (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(link_tag)
 
+  initjQuery = ->
+    $ = jQuery = window.jQuery.noConflict(true)
+    main()
+
   # load jquery into 'jQuery' variable then call main
   if window.jQuery is undefined or window.jQuery.fn.jquery isnt jqueryVersion
     loadScript(jqueryPath, initjQuery)
   else
     initjQuery()
-
-  window.addEventListener 'load', ->
-    console.log('loaded')
-    initjQuery()
-
-  initjQuery = ->
-    $ = jQuery = window.jQuery.noConflict(true)
-    main()
 
   # starting point for your widget 
   main = ->
