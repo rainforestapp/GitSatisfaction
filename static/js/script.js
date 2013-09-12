@@ -2,7 +2,7 @@
 (function() {
 
   (function() {
-    var $, allScripts, buildWidget, dict, expandIssue, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadIssues, loadScript, main, name, postIssue, removeListeners, renderForm, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
+    var $, allScripts, buildWidget, dict, expandIssue, i, initjQuery, jqueryPath, jqueryVersion, loadCss, loadIssues, loadScript, main, name, postIssue, removeListeners, renderForm, renderIssue, renderIssues, script, scriptName, scriptTag, targetScripts, _i, _len;
     $ = null;
     scriptName = "embed.js";
     jqueryPath = "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js";
@@ -55,15 +55,20 @@
     main = function() {
       loadCss("../static/css/style.css");
       buildWidget();
-      loadIssues();
+      loadIssues(renderIssues);
       return renderForm();
     };
-    loadIssues = function() {
+    loadIssues = function(callback) {
       var _this = this;
       return $.ajax({
         url: "/issues",
         success: function(data) {
-          return renderIssues(data);
+          var issue, _j, _len1;
+          for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
+            issue = data[_j];
+            dict[issue.id] = issue;
+          }
+          return callback();
         },
         dataType: "json"
       });
@@ -76,7 +81,10 @@
         dataType: "json",
         data: JSON.stringify(issue),
         success: function(data) {
-          return expandIssue(data.id);
+          return loadIssues(function() {
+            renderIssue(dict[data.id]);
+            return expandIssue(data.id);
+          });
         }
       });
     };
@@ -113,20 +121,25 @@
       container.append(modal_body);
       return $('body').append(container);
     };
-    renderIssues = function(issues) {
-      var issue, issue_list, _j, _len1;
-      issue_list = $('#git-satisfaction-issue-list');
-      for (_j = 0, _len1 = issues.length; _j < _len1; _j++) {
-        issue = issues[_j];
-        dict[issue.id] = issue;
-        issue_list.append($("<li>", {
-          text: "" + issue.title + " (" + issue.num_subscribers + ")",
-          id: issue.id,
-          "class": "git-satisfaction-issue-li"
-        }));
+    renderIssues = function() {
+      var issue, _results;
+      _results = [];
+      for (i in dict) {
+        issue = dict[i];
+        _results.push(renderIssue(issue));
       }
-      return $('.git-satisfaction-issue-li').on('click', function(e) {
-        return expandIssue($(e.currentTarget).attr('id'));
+      return _results;
+    };
+    renderIssue = function(issue) {
+      var issue_list;
+      issue_list = $('#git-satisfaction-issue-list');
+      issue_list.prepend($("<li>", {
+        text: "" + issue.title + " (" + issue.num_subscribers + ")",
+        id: issue.id,
+        "class": "git-satisfaction-issue-li"
+      }));
+      return $("#" + issue.id).on('click', function(e) {
+        return expandIssue(issue.id);
       });
     };
     renderForm = function() {
@@ -165,6 +178,8 @@
     expandIssue = function(id) {
       var issue, issue_holder, right_pane;
       issue = dict[id];
+      $('.git-satisfaction-issue-li-selected').removeClass('git-satisfaction-issue-li-selected');
+      $("#" + id).addClass('git-satisfaction-issue-li-selected');
       right_pane = $('#git-satisfaction-right-pane');
       issue_holder = $('<div>', {
         id: "git-satisfaction-enlarged-issue"
