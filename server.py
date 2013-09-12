@@ -5,15 +5,23 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+from os import environ
 
 from tornado.options import define
 define("port", default=5000, help="run on the given port", type=int)
 
 
+SETTINGS = dict(
+    github_user=environ['GITHUB_USER'],
+    github_pass=environ['GITHUB_PASS'],
+    google_analytics_id=environ.get('GOOGLEANALYTICSID', False)
+)
+
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/([^/]+)?", MainHandler)
+            (r"/issues/?", Issues),
+            (r"/?", MainHandler),
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -22,20 +30,17 @@ class Application(tornado.web.Application):
         )
         tornado.web.Application.__init__(self, handlers, **settings)
 
-
 class MainHandler(tornado.web.RequestHandler):
-    def get(self, q):
-        if 'GOOGLEANALYTICSID' in os.environ:
-            google_analytics_id = os.environ['GOOGLEANALYTICSID']
-        else:
-            google_analytics_id = False
-
+    def get(self):
         self.render(
             "main.html",
-            page_title='GitSatisfaction',
-            google_analytics_id=google_analytics_id,
+            page_title='user: %s, pass: %s' % (SETTINGS['github_user'], SETTINGS['github_pass']),
+            google_analytics_id=SETTINGS['google_analytics_id'],
         )
 
+class Issues(tornado.web.RequestHandler):
+    def get(self):
+        self.write("hello")
 
 def main():
     tornado.options.parse_command_line()
@@ -44,7 +49,5 @@ def main():
 
     tornado.ioloop.IOLoop.instance().start()
 
-
 if __name__ == "__main__":
     main()
-
