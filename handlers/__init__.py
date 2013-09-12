@@ -72,7 +72,9 @@ class GithubCallbackHandler(tornado.web.RequestHandler):
         payload = tornado.escape.json_decode(self.request.body)
         print payload
 
-        mailgun_send('russ@rainforestqa.com', 'test issue', json.dumps(payload))
+        issue = payload['issue']
+
+        mailgun_send('russ@rainforestqa.com', issue['title'] + " - " + payload['action'], json.dumps(issue))
 
         self.content_type = 'application/json'
         self.write(payload['action'])
