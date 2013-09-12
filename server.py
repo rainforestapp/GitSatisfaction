@@ -7,6 +7,8 @@ import tornado.options
 import tornado.web
 from os import environ
 
+import json
+
 from tornado.options import define
 define("port", default=5000, help="run on the given port", type=int)
 
@@ -22,6 +24,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/issues/?", Issues),
             (r"/?", MainHandler),
+            (r"/(callbacks/github)?", GithubCallbackHandler)
         ]
         settings = dict(
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
@@ -41,6 +44,12 @@ class MainHandler(tornado.web.RequestHandler):
 class Issues(tornado.web.RequestHandler):
     def get(self):
         self.write("hello")
+
+class GithubCallbackHandler(tornado.web.RequestHandler):
+    def post(self, q):
+        print "GithubCallbackHandler:"
+        print json.loads(self.request.body)
+        self.write("test")
 
 def main():
     tornado.options.parse_command_line()
