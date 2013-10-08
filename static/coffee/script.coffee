@@ -52,14 +52,16 @@
   main = ->
     loadCss "../static/css/style.css"
     buildWidget()
-    loadIssues()
+    loadIssues renderIssues
     renderForm()
 
-  loadIssues = ->
+  loadIssues = (callback) ->
     $.ajax
       url: "/issues"
       success: (data) =>
-        renderIssues data
+        for issue in data
+          dict[issue.id] = issue
+        callback()
       dataType: "json"
 
   postIssue = (issue) ->
@@ -69,7 +71,9 @@
       dataType: "json"
       data: JSON.stringify issue
       success: (data) =>
-        expandIssue(data.id)
+        loadIssues =>
+          renderIssue dict[data.id]
+          expandIssue(data.id)
 
   buildWidget = ->
     container = $('<div>', { id: "git-satisfaction-modal"})
@@ -91,16 +95,17 @@
 
     $('body').append container
 
-  renderIssues = (issues) ->
-    issue_list = $('#git-satisfaction-issue-list')
+  renderIssues = ->
     # render each issue as an li
-    for issue in issues
-      dict[issue.id] = issue
-      issue_list.append $("<li>", { text: "#{issue.title} (#{issue.num_subscribers})", id: issue.id, class: "git-satisfaction-issue-li" })
+    for i, issue of dict
+      renderIssue (issue)
     
+  renderIssue = (issue) ->
+    issue_list = $('#git-satisfaction-issue-list')
+    issue_list.prepend $("<li>", { text: "#{issue.title} (#{issue.num_subscribers})", id: issue.id, class: "git-satisfaction-issue-li" })
     # enlarge issue when user clicks on it
-    $('.git-satisfaction-issue-li').on 'click', (e) ->
-      expandIssue $(e.currentTarget).attr('id')
+    $("##{issue.id}").on 'click', (e) ->
+      expandIssue issue.id
 
   renderForm = ->
     # build and replace right pane html with form
@@ -122,6 +127,10 @@
   expandIssue = (id) ->
     # get correct issue object by id
     issue = dict[id]
+    # remove any existing highlights
+    $('.git-satisfaction-issue-li-selected').removeClass('git-satisfaction-issue-li-selected')
+    # add highlight to correct selector
+    $("##{id}").addClass('git-satisfaction-issue-li-selected')
 
     right_pane = $('#git-satisfaction-right-pane')
     issue_holder = $('<div>', { id: "git-satisfaction-enlarged-issue" })

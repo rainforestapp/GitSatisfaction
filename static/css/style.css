@@ -51,11 +51,13 @@
   width: 34%;
   border-right: 1px solid #E6E6E6;
   overflow: auto;
+  position: relative;
 }
 
 #git-satisfaction-right-pane {
   float: right;
   width: 66%;
+  overflow: auto;
 }
 
 #git-satisfaction-issue-list {
@@ -72,6 +74,7 @@
   padding: 1em;
 }
 
+#git-satisfaction-issue-list > li.git-satisfaction-issue-li-selected,
 #git-satisfaction-issue-list > li:hover {
   cursor: pointer;
   background-color: #E6E6E6;
