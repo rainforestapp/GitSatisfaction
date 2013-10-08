@@ -1,5 +1,13 @@
 import re
 
+def managle_listeners(body)
+    start = "listeners: "
+    for line in body.split("\n"):
+        if line.startswith(start):
+            return line[len(start):].split(",")
+
+    return []
+
 class Issue(object):
     def __init__(self, g3_issue):
         self.g3_issue = g3_issue
@@ -13,13 +21,7 @@ class Issue(object):
         }
 
     def get_listeners(self):
-        start = "listeners: "
-        for line in self.g3_issue.body_text.split("\n"):
-            if line.startswith(start):
-                return line[len(start):].split(",")
-
-        return []
-
+        managle_listeners(self.g3_issue.body_text)
 
     def add_subscriber(self, email):
         listeners = self.get_listeners()
