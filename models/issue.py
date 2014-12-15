@@ -1,6 +1,6 @@
 import re
 
-def managle_listeners(body)
+def managle_listeners(body):
     start = "listeners: "
     for line in body.split("\n"):
         if line.startswith(start):
